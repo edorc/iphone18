@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iPhone 18 Pro — 鈦金屬工藝，再創巔峰 | Apple (台灣)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Noto Sans TC & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <!-- Three.js r128 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            appleDark: '#000000',
+            appleCard: '#111114',
+            appleBorder: 'rgba(255, 255, 255, 0.12)',
+            burgundy: {
+              DEFAULT: '#562131',
+              light: '#8E4158',
+              glow: '#B55B75',
+              deep: '#2E0F18',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* 自訂捲軸與全域質感微調 */
+    body {
+      background-color: #000000;
+      color: #f5f5f7;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 毛玻璃導覽列與卡片 */
+    .glass-nav {
+      background: rgba(18, 18, 22, 0.72);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-panel {
+      background: rgba(24, 24, 28, 0.65);
+      backdrop-filter: saturate(160%) blur(24px);
+      -webkit-backdrop-filter: saturate(160%) blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* 勃艮第酒紅鈦金屬漸層文字 */
+    .text-gradient-burgundy {
+      background: linear-gradient(135deg, #F5D5DF 0%, #C6738B 45%, #84374E 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-gradient-titanium {
+      background: linear-gradient(180deg, #FFFFFF 0%, #A1A1A6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* 3D 畫布容器與互動游標 */
+    #canvas-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      touch-action: none;
+    }
+    #canvas-wrapper:active {
+      cursor: grabbing;
+    }
+
+    /* 3D 熱點標註脈衝動畫 */
+    @keyframes pulseRing {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2.2);
+        opacity: 0;
+      }
+    }
+
+    .hotspot-marker {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+      transition: opacity 0.25s ease, transform 0.2s ease;
+    }
+
+    .hotspot-pulse {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 34px;
+      height: 34px;
+      border-radius: 9999px;
+      background: rgba(226, 134, 161, 0.45);
+      animation: pulseRing 2.2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+      pointer-events: none;
+    }
+
+    /* 顏色選擇器外環 */
+    .swatch-btn {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .swatch-btn.active {
+      box-shadow: 0 0 0 2px #000000, 0 0 0 4px #ffffff;
+      transform: scale(1.08);
+    }
+
+    /* 捲動淡入動畫 */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="selection:bg-[#8E4158] selection:text-white">
+
+  <!-- 頂部固定導覽列 (Apple 官網風格) -->
+  <header class="fixed top-0 inset-x-0 z-50 glass-nav transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <!-- Apple SVG 標誌 -->
+        <a href="#" class="text-white/90 hover:text-white transition" aria-label="Apple 首頁">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 170 170">
+            <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.13-1.9-14.34-6.08-3.69-3.03-7.61-7.82-11.77-14.37-5.06-7.87-9.22-16.95-12.48-27.25-3.26-10.3-4.89-20.12-4.89-29.47 0-11.17 2.79-20.38 8.37-27.64 5.58-7.25 12.63-11.02 21.14-11.3 4.35 0 9.35 1.32 15.01 3.96 5.65 2.64 9.29 3.99 10.92 4.05 1.34 0 5.36-1.56 12.06-4.68 6.7-3.11 12.35-4.44 16.96-3.99 12.63 1.02 22.14 5.99 28.53 14.92-11.29 6.85-16.84 16.43-16.65 28.74.19 9.59 3.76 17.56 10.71 23.91 4.78 4.44 10.42 7.21 16.92 8.31-1.36 4.25-2.89 8.35-4.59 12.31zM119.22 31.01c0 7.49-2.74 14.48-8.21 20.97-6.6 7.72-14.59 12.18-23.25 11.48-.12-.91-.19-1.88-.19-2.92 0-7.19 3.13-14.88 8.69-21.18 2.77-3.18 6.3-5.83 10.58-7.95 4.28-2.11 8.33-3.28 12.16-3.5.15 1.07.22 2.11.22 3.1z"/>
+          </svg>
+        </a>
+        <span class="text-white/30">|</span>
+        <span class="font-semibold tracking-tight text-sm sm:text-base text-white">iPhone 18 Pro</span>
+      </div>
+
+      <nav class="hidden md:flex items-center space-x-7 text-xs text-gray-300">
+        <a href="#studio-360" class="hover:text-white transition">360° 全景鑑賞</a>
+        <a href="#design" class="hover:text-white transition">鈦金屬工藝</a>
+        <a href="#camera" class="hover:text-white transition">Pro 相機系統</a>
+        <a href="#chip" class="hover:text-white transition">A20 Pro 晶片</a>
+        <a href="#specs" class="hover:text-white transition">技術規格</a>
+      </nav>
+
+      <div class="flex items-center space-x-3">
+        <a href="#preorder" class="bg-[#0071e3] hover:bg-[#0077ed] text-white text-xs font-medium px-4 py-1.5 rounded-full transition shadow-lg shadow-blue-500/20">
+          立即預購
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero 區塊 -->
+  <section class="relative pt-28 pb-12 sm:pt-36 sm:pb-16 px-4 text-center overflow-hidden">
+    <!-- 背景酒紅光暈 -->
+    <div class="pointer-events-none absolute top-16 left-1/2 -translate-x-1/2 w-[620px] h-[340px] rounded-full bg-[#562131]/30 blur-[120px]"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto">
+      <p class="text-xs sm:text-sm uppercase tracking-[0.25em] text-[#D2829A] font-medium mb-3">
+        全新勃艮第酒紅登場
+      </p>
+      <h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-gradient-titanium mb-4">
+        iPhone 18 Pro
+      </h1>
+      <p class="text-xl sm:text-3xl font-semibold text-gradient-burgundy tracking-tight mb-6">
+        鈦金屬工藝，再創巔峰。
+      </p>
+      <p class="text-sm sm:text-base text-gray-400 max-w-2xl mx-auto leading-relaxed mb-8">
+        航太等級 5 級鈦金屬融合全新勃艮第酒紅微噴砂飾面、全寬幅 Pro 級三鏡頭攝影系統，以及劃時代 2 奈米 A20 Pro 晶片。
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="#studio-360" class="inline-flex items-center gap-2 bg-white text-black hover:bg-gray-100 font-medium text-sm px-6 py-3 rounded-full transition shadow-xl">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+          </svg>
+          互動 360° 檢視機身
+        </a>
+        <a href="#preorder" class="inline-flex items-center gap-1.5 glass-panel hover:bg-white/10 text-white font-medium text-sm px-6 py-3 rounded-full transition">
+          NT$36,900 起
+          <span class="text-gray-400">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 核心 3D / 360° 互動展示區 -->
+  <section id="studio-360" class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+    <div class="relative rounded-3xl overflow-hidden border border-white/15 bg-gradient-to-b from-[#17171C] via-[#0D0D10] to-[#08080A] shadow-2xl">
+      
+      <!-- 頂部狀態與工具列 -->
+      <div class="relative z-20 flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-white/10 bg-black/40 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-[#562131]/50 text-[#F2B8C9] border border-[#8E4158]/40">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#E67E9C] animate-pulse"></span>
+            3D 即時渲染工作室
+          </span>
+          <span id="current-color-label" class="text-xs sm:text-sm text-gray-300 font-medium">
+            勃艮第酒紅鈦金屬
+          </span>
+        </div>
+
+        <!-- 功能開關群組：自動旋轉 & 互動熱點 -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button id="toggle-autorotate" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition border border-white/10">
+            <svg id="icon-rotate" class="w-3.5 h-3.5 text-[#E67E9C]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            <span id="autorotate-text">自動旋轉：開啟</span>
+          </button>
+
+          <button id="toggle-hotspots" class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full bg-[#562131] hover:bg-[#6E2A3F] text-white transition border border-[#A24E67]/50 shadow-md">
+            <span class="w-2 h-2 rounded-full bg-white"></span>
+            <span id="hotspots-text">工藝熱點：顯示</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D 畫布與懸浮熱點容器 -->
+      <div class="relative w-full h-[540px] sm:h-[650px] lg:h-[700px]">
+        <!-- Three.js 渲染容器 -->
+        <div id="canvas-wrapper"></div>
+
+        <!-- 3D 空間投影熱點層 -->
+        <div id="hotspots-layer" class="pointer-events-none absolute inset-0 overflow-hidden"></div>
+
+        <!-- 左下角操作提示 -->
+        <div class="pointer-events-none hidden sm:flex items-center gap-4 absolute bottom-24 left-6 z-10 text-xs text-gray-400 bg-black/50 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/10">
+          <span>🖱️ 拖曳 360° 旋轉</span>
+          <span class="text-white/20">|</span>
+          <span>🔍 滾輪 / 雙指縮放</span>
+          <span class="text-white/20">|</span>
+          <span>✨ 點擊亮點查看細節</span>
+        </div>
+
+        <!-- 熱點規格彈出卡片 (點擊熱點時顯示) -->
+        <div id="hotspot-card" class="hidden absolute top-6 right-6 left-6 sm:left-auto sm:w-80 z-30 glass-panel rounded-2xl p-5 shadow-2xl transition-all duration-300">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <span id="hotspot-badge" class="text-[11px] uppercase tracking-wider font-semibold px-2.5 py-0.5 rounded-full bg-[#562131]/80 text-[#F4C2D0] border border-[#9B4961]/50">
+              Pro 硬體工藝
+            </span>
+            <button id="close-hotspot-card" class="text-gray-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition" aria-label="關閉說明">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <h3 id="hotspot-title" class="text-base font-bold text-white mb-1.5">4800 萬像素三鏡頭系統</h3>
+          <p id="hotspot-desc" class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+            全新橫向寬幅鈦金屬相機模組，整合 48MP 融合主相機、48MP 超廣角與 5 倍光學望遠鏡頭，搭配 LiDAR 光學雷達掃描儀。
+          </p>
+        </div>
+
+        <!-- 底部懸浮控制列：視角切換 + 鈦金屬配色選擇器 -->
+        <div class="absolute bottom-4 inset-x-4 z-20 flex flex-col lg:flex-row items-center justify-between gap-3 pointer-events-none">
+          
+          <!-- 六面視角 + 英雄視角一鍵切換按鈕 -->
+          <div class="pointer-events-auto flex items-center gap-1 sm:gap-1.5 overflow-x-auto max-w-full p-1.5 rounded-full glass-panel shadow-xl">
+            <button data-view="hero" class="view-btn active px-3 py-1.5 rounded-full text-xs font-medium bg-white text-black transition whitespace-nowrap">
+              45° 英雄視角
+            </button>
+            <button data-view="front" class="view-btn px-3 py-1.5 rounded-full text-xs font-medium text-gray-300 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+              正面
+            </button>
+            <button data-view="back" class="view-btn px-3 py-1.5 rounded-full text-xs font-medium text-gray-300 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+              背面
+            </button>
+            <button data-view="left" class="view-btn px-3 py-1.5 rounded-full text-xs font-medium text-gray-300 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+              左側
+            </button>
+            <button data-view="right" class="view-btn px-3 py-1.5 rounded-full text-xs font-medium text-gray-300 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+              右側
+            </button>
+            <button data-view="top" class="view-btn px-3 py-1.5 rounded-full text-xs font-medium text-gray-300 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+              頂部
+            </button>
+            <button data-view="bottom" class="view-btn px-3 py-1.5 rounded-full text-xs font-medium text-gray-300 hover:text-white hover:bg-white/10 transition whitespace-nowrap">
+              底部
+            </button>
+          </div>
+
+          <!-- 多款鈦金屬配色即時切換器 -->
+          <div class="pointer-events-auto flex items-center gap-3 px-4 py-2 rounded-full glass-panel shadow-xl">
+            <span class="text-xs text-gray-400 hidden sm:inline">外觀飾面</span>
+            <div class="flex items-center gap-2.5">
+              <button data-finish="burgundy" title="勃艮第酒紅鈦金屬" class="swatch-btn active w-6 h-6 rounded-full border border-white/30" style="background: linear-gradient(135deg, #6E2B3F 0%, #3E1522 100%);"></button>
+              <button data-finish="natural" title="原色鈦金屬" class="swatch-btn w-6 h-6 rounded-full border border-white/30" style="background: linear-gradient(135deg, #C7C2B8 0%, #8E8980 100%);"></button>
+              <button data-finish="desert" title="沙漠鈦金屬" class="swatch-btn w-6 h-6 rounded-full border border-white/30" style="background: linear-gradient(135deg, #D8BE9E 0%, #9E8263 100%);"></button>
+              <button data-finish="black" title="太空黑鈦金屬" class="swatch-btn w-6 h-6 rounded-full border border-white/30" style="background: linear-gradient(135deg, #3A3A3E 0%, #161618 100%);"></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 設計與外觀亮點 -->
+  <section id="design" class="reveal-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/10">
+    <div class="max-w-3xl mb-14">
+      <p class="text-xs sm:text-sm font-semibold tracking-widest uppercase text-[#D2829A] mb-2">設計工藝</p>
+      <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-5">
+        航太級 5 級鈦金屬，<br />披上深邃勃艮第酒紅。
+      </h2>
+      <p class="text-gray-400 text-base sm:text-lg leading-relaxed">
+        透過精密微噴砂與物理氣相沉積（PVD）鍍膜工藝，iPhone 18 Pro 在高強度鈦金屬邊框與霧面質感玻璃背蓋之間，呈現出層次分明的酒紅金屬光澤，兼具輕盈手感與極致堅固。
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- 卡片 1 -->
+      <div class="glass-panel rounded-3xl p-8 flex flex-col justify-between hover:border-[#8E4158]/60 transition duration-300">
+        <div>
+          <div class="w-11 h-11 rounded-2xl bg-[#562131]/50 border border-[#8E4158]/40 flex items-center justify-center text-[#F2B8C9] mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">全新勃艮第酒紅飾面</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">
+            多層奈米級光學鍍膜讓機身隨光線角度折射出從深酒紅到紫檀金屬的細膩漸變，抗指紋霧面背蓋觸感溫潤細緻。
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-white/10 text-xs text-[#D2829A] font-medium">
+          5 級航太鈦金屬 × 霧面注色玻璃
+        </div>
+      </div>
+
+      <!-- 卡片 2 -->
+      <div class="glass-panel rounded-3xl p-8 flex flex-col justify-between hover:border-[#8E4158]/60 transition duration-300">
+        <div>
+          <div class="w-11 h-11 rounded-2xl bg-[#562131]/50 border border-[#8E4158]/40 flex items-center justify-center text-[#F2B8C9] mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">極窄邊框 Super Retina XDR</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">
+            新一代超瓷晶盾面板與 1.15mm 史上最窄黑邊，支援 1Hz–120Hz ProMotion 自動適應更新頻率與 3,000 尼特戶外峰值亮度。
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-white/10 text-xs text-[#D2829A] font-medium">
+          6.3 吋 / 6.9 吋 OLED 全螢幕顯示器
+        </div>
+      </div>
+
+      <!-- 卡片 3 -->
+      <div class="glass-panel rounded-3xl p-8 flex flex-col justify-between hover:border-[#8E4158]/60 transition duration-300">
+        <div>
+          <div class="w-11 h-11 rounded-2xl bg-[#562131]/50 border border-[#8E4158]/40 flex items-center justify-center text-[#F2B8C9] mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">相機控制鍵與動作按鈕</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">
+            藍寶石玻璃覆蓋的電容式「相機控制」側邊按鍵，輕按對焦、滑動無段變焦；搭配可自訂的動作按鈕，一鍵啟動常用捷徑。
+          </p>
+        </div>
+        <div class="mt-8 pt-4 border-t border-white/10 text-xs text-[#D2829A] font-medium">
+          IP68 等級防潑抗水與防塵
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pro 級相機系統 -->
+  <section id="camera" class="reveal-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-6">
+        <p class="text-xs sm:text-sm font-semibold tracking-widest uppercase text-[#D2829A] mb-2">Pro 相機系統</p>
+        <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-6">
+          橫向寬幅鏡頭島，<br />專業電影級影像再進化。
+        </h2>
+        <p class="text-gray-400 text-base leading-relaxed mb-8">
+          全新一體成型圓角矩形相機模組，不僅提升內部光學防手震空間，更整合三顆 4800 萬像素 Pro 級鏡頭與獨立 LiDAR 光學雷達掃描儀，夜拍與微距細節纖毫畢現。
+        </p>
+
+        <div class="grid grid-cols-2 gap-5">
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+            <div class="text-2xl sm:text-3xl font-bold text-white mb-1">48MP</div>
+            <div class="text-xs text-gray-400">第二代融合主相機 (f/1.78)</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+            <div class="text-2xl sm:text-3xl font-bold text-white mb-1">5× 光學</div>
+            <div class="text-xs text-gray-400">120mm 四重反射稜鏡望遠</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+            <div class="text-2xl sm:text-3xl font-bold text-white mb-1">4K 120fps</div>
+            <div class="text-xs text-gray-400">杜比視界 HDR 與 ProRes 錄影</div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+            <div class="text-2xl sm:text-3xl font-bold text-white mb-1">LiDAR</div>
+            <div class="text-xs text-gray-400">新世代夜間人像與空間測距</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 視覺化相機模組示意卡片 -->
+      <div class="lg:col-span-6">
+        <div class="relative rounded-3xl p-8 sm:p-10 bg-gradient-to-br from-[#2B1019] via-[#151216] to-[#0B0B0E] border border-[#8E4158]/30 overflow-hidden shadow-2xl">
+          <div class="flex items-center justify-between mb-6">
+            <span class="text-xs font-medium text-[#F2B8C9] bg-[#562131]/60 px-3 py-1 rounded-full">三鏡頭陣列架構</span>
+            <button onclick="focusCameraView()" class="text-xs text-white/80 hover:text-white underline underline-offset-4">
+              在 3D 模型中檢視背面鏡頭 →
+            </button>
+          </div>
+          <!-- SVG 精繪相機模組圖解 -->
+          <div class="flex justify-center py-4">
+            <svg viewBox="0 0 360 210" class="w-full max-w-md drop-shadow-2xl">
+              <defs>
+                <linearGradient id="bumpGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#69283B" />
+                  <stop offset="100%" stop-color="#37121E" />
+                </linearGradient>
+                <radialGradient id="lensGlass" cx="35%" cy="35%" r="65%">
+                  <stop offset="0%" stop-color="#3B4D7A" />
+                  <stop offset="45%" stop-color="#111626" />
+                  <stop offset="100%" stop-color="#05060A" />
+                </radialGradient>
+              </defs>
+              <!-- 寬幅相機模組底板 -->
+              <rect x="15" y="15" width="330" height="180" rx="38" fill="url(#bumpGrad)" stroke="#9B4A62" stroke-width="2" />
+              <!-- 左上鏡頭 -->
+              <circle cx="78" cy="65" r="34" fill="#18181C" stroke="#7E354B" stroke-width="3" />
+              <circle cx="78" cy="65" r="24" fill="url(#lensGlass)" />
+              <circle cx="71" cy="58" r="5" fill="rgba(255,255,255,0.35)" />
+              <!-- 左下鏡頭 -->
+              <circle cx="78" cy="145" r="34" fill="#18181C" stroke="#7E354B" stroke-width="3" />
+              <circle cx="78" cy="145" r="24" fill="url(#lensGlass)" />
+              <circle cx="71" cy="138" r="5" fill="rgba(255,255,255,0.35)" />
+              <!-- 中間主鏡頭 -->
+              <circle cx="152" cy="105" r="36" fill="#18181C" stroke="#7E354B" stroke-width="3" />
+              <circle cx="152" cy="105" r="25" fill="url(#lensGlass)" />
+              <circle cx="144" cy="97" r="6" fill="rgba(255,255,255,0.4)" />
+              <!-- 右上適應性原彩閃光燈 -->
+              <circle cx="292" cy="58" r="14" fill="#E8E4DC" stroke="#5B2435" stroke-width="2" />
+              <circle cx="292" cy="58" r="8" fill="#FFFDF7" />
+              <!-- 右中降噪麥克風 -->
+              <circle cx="292" cy="105" r="3.5" fill="#14090D" />
+              <!-- 右下 LiDAR 掃描儀 -->
+              <circle cx="292" cy="150" r="15" fill="#0B0B0E" stroke="#4D1D2C" stroke-width="2" />
+            </svg>
+          </div>
+          <p class="text-xs text-center text-gray-400 mt-2">
+            完整重現橫向寬幅鏡頭島配置：三顆 Pro 鏡頭、原彩閃光燈、麥克風與 LiDAR 感應器
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 效能與電池續航 (A20 Pro 晶片) -->
+  <section id="chip" class="reveal-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/10">
+    <div class="glass-panel rounded-3xl p-8 sm:p-12 lg:p-16 relative overflow-hidden">
+      <div class="pointer-events-none absolute -right-24 -bottom-24 w-96 h-96 rounded-full bg-[#6E2B3F]/30 blur-[100px]"></div>
+      
+      <div class="max-w-3xl relative z-10">
+        <span class="inline-block text-xs font-semibold tracking-widest uppercase text-[#F2B8C9] bg-[#562131]/60 px-3 py-1 rounded-full mb-4">
+          2 奈米製程工藝
+        </span>
+        <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-5">
+          A20 Pro 晶片。<br />專為 Apple Intelligence 打造。
+        </h2>
+        <p class="text-gray-300 text-base sm:text-lg leading-relaxed mb-10">
+          採用業界領先的第二代 2 奈米架構，配備 6 核心 CPU、6 核心硬體加速光線追蹤 GPU 與 16 核心神經網路引擎，運算速度提升高達 25%，同時帶來歷代 iPhone 最強勁的電池續航表現。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 relative z-10">
+        <div class="p-6 rounded-2xl bg-black/50 border border-white/10">
+          <p class="text-xs text-gray-400 mb-1">影片播放時間最長可達</p>
+          <p class="text-3xl sm:text-4xl font-bold text-gradient-burgundy">33 小時</p>
+          <p class="text-xs text-gray-400 mt-2">全天候高效能續航與石墨烯散熱架構</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-black/50 border border-white/10">
+          <p class="text-xs text-gray-400 mb-1">USB-C 傳輸速率最高可達</p>
+          <p class="text-3xl sm:text-4xl font-bold text-white">10Gb/s</p>
+          <p class="text-xs text-gray-400 mt-2">支援 USB 3 與外接 SSD 直錄 ProRes</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-black/50 border border-white/10">
+          <p class="text-xs text-gray-400 mb-1">MagSafe / Qi2 無線充電</p>
+          <p class="text-3xl sm:text-4xl font-bold text-white">25W 快充</p>
+          <p class="text-xs text-gray-400 mt-2">30 分鐘即可充至最高 50% 電量</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 技術規格比較與預購模擬器 -->
+  <section id="specs" class="reveal-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-white/10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      
+      <!-- 左側：重點技術規格表 -->
+      <div class="lg:col-span-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-white mb-6">技術規格一覽</h2>
+        <div class="divide-y divide-white/10 border-y border-white/10 text-sm">
+          <div class="py-4 flex justify-between gap-4">
+            <span class="text-gray-400">機身材質</span>
+            <span class="text-white font-medium text-right">5 級航太鈦金屬邊框、霧面質感玻璃背蓋</span>
+          </div>
+          <div class="py-4 flex justify-between gap-4">
+            <span class="text-gray-400">外觀配色</span>
+            <span class="text-white font-medium text-right">勃艮第酒紅、原色鈦金屬、沙漠鈦金屬、太空黑</span>
+          </div>
+          <div class="py-4 flex justify-between gap-4">
+            <span class="text-gray-400">顯示器</span>
+            <span class="text-white font-medium text-right">6.3 吋 Super Retina XDR (2622 × 1206, 460 ppi)</span>
+          </div>
+          <div class="py-4 flex justify-between gap-4">
+            <span class="text-gray-400">晶片</span>
+            <span class="text-white font-medium text-right">A20 Pro 晶片 (2nm 製程, 16 核心神經網路引擎)</span>
+          </div>
+          <div class="py-4 flex justify-between gap-4">
+            <span class="text-gray-400">後置相機</span>
+            <span class="text-white font-medium text-right">48MP 主相機 + 48MP 超廣角 + 12MP 5× 望遠 + LiDAR</span>
+          </div>
+          <div class="py-4 flex justify-between gap-4">
+            <span class="text-gray-400">連接埠與無線</span>
+            <span class="text-white font-medium text-right">USB-C (USB 3)、Wi-Fi 7、藍牙 5.4、5G</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側：互動預購模擬器 -->
+      <div id="preorder" class="lg:col-span-6">
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 border border-white/15">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-white">選購你的 iPhone 18 Pro</h2>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+              現貨供應中
+            </span>
+          </div>
+
+          <!-- 步驟 1：選擇外觀顏色 -->
+          <div class="mb-6">
+            <label class="block text-xs text-gray-400 mb-2.5">
+              1. 選擇外觀 — <strong id="order-color-name" class="text-white">勃艮第酒紅鈦金屬</strong>
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <button data-order-finish="burgundy" class="order-finish-btn active flex items-center gap-2 p-2.5 rounded-xl border border-white bg-white/10 text-left transition">
+                <span class="w-4 h-4 rounded-full shrink-0" style="background:#562131;"></span>
+                <span class="text-xs font-medium text-white truncate">勃艮第酒紅</span>
+              </button>
+              <button data-order-finish="natural" class="order-finish-btn flex items-center gap-2 p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-left transition">
+                <span class="w-4 h-4 rounded-full shrink-0" style="background:#B5B0A6;"></span>
+                <span class="text-xs font-medium text-gray-300 truncate">原色鈦金屬</span>
+              </button>
+              <button data-order-finish="desert" class="order-finish-btn flex items-center gap-2 p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-left transition">
+                <span class="w-4 h-4 rounded-full shrink-0" style="background:#C9AE8D;"></span>
+                <span class="text-xs font-medium text-gray-300 truncate">沙漠鈦金屬</span>
+              </button>
+              <button data-order-finish="black" class="order-finish-btn flex items-center gap-2 p-2.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-left transition">
+                <span class="w-4 h-4 rounded-full shrink-0" style="background:#2A2A2E;"></span>
+                <span class="text-xs font-medium text-gray-300 truncate">太空黑</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 步驟 2：選擇儲存容量 -->
+          <div class="mb-6">
+            <label class="block text-xs text-gray-400 mb-2.5">2. 選擇儲存容量</label>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button data-storage="256GB" data-price="36900" class="storage-btn active p-3.5 rounded-xl border border-white bg-white/10 flex items-center justify-between transition">
+                <span class="text-sm font-bold text-white">256GB</span>
+                <span class="text-xs text-gray-300">NT$36,900</span>
+              </button>
+              <button data-storage="512GB" data-price="43900" class="storage-btn p-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 flex items-center justify-between transition">
+                <span class="text-sm font-bold text-white">512GB</span>
+                <span class="text-xs text-gray-400">NT$43,900</span>
+              </button>
+              <button data-storage="1TB" data-price="50900" class="storage-btn p-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 flex items-center justify-between transition">
+                <span class="text-sm font-bold text-white">1TB</span>
+                <span class="text-xs text-gray-400">NT$50,900</span>
+              </button>
+              <button data-storage="2TB" data-price="61900" class="storage-btn p-3.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 flex items-center justify-between transition">
+                <span class="text-sm font-bold text-white">2TB</span>
+                <span class="text-xs text-gray-400">NT$61,900</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 總金額與加入購物袋按鈕 -->
+          <div class="pt-5 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <p class="text-xs text-gray-400">總計金額（含稅與免運費）</p>
+              <p id="total-price" class="text-2xl sm:text-3xl font-bold text-white">NT$36,900</p>
+            </div>
+            <button id="add-to-bag-btn" class="bg-[#0071e3] hover:bg-[#0077ed] active:scale-[0.98] text-white font-semibold text-sm px-7 py-3.5 rounded-full transition shadow-lg shadow-blue-600/25">
+              加入購物袋
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 購物袋加入成功提示 Toast (取代 alert) -->
+  <div id="bag-toast" class="fixed bottom-6 right-6 z-50 translate-y-24 opacity-0 pointer-events-none transition-all duration-300 glass-panel rounded-2xl p-4 shadow-2xl border border-emerald-400/30 max-w-sm">
+    <div class="flex items-start gap-3">
+      <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5">
+        ✓
+      </div>
+      <div>
+        <h4 class="text-sm font-bold text-white">已加入 Apple 購物袋</h4>
+        <p id="bag-toast-detail" class="text-xs text-gray-300 mt-0.5">
+          iPhone 18 Pro 256GB 勃艮第酒紅鈦金屬
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-white/10 py-10 px-4 text-center text-xs text-gray-500">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>Copyright © 2026 Apple Inc. 保留一切權利。3D 互動產品展示體驗網頁。</p>
+      <div class="flex items-center space-x-5">
+        <a href="#studio-360" class="hover:text-gray-300 transition">回到 360° 檢視</a>
+        <a href="#specs" class="hover:text-gray-300 transition">技術規格</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 核心 JavaScript：Three.js 3D iPhone 18 Pro 建構與互動邏輯 -->
+  <script>
+    // ==========================================
+    // 1. 配色與產品資料定義
+    // ==========================================
+    const FINISH_CONFIGS = {
+      burgundy: {
+        name: '勃艮第酒紅鈦金屬',
+        frameColor: 0x581f31,
+        backColor: 0x451725,
+        bumpColor: 0x541d2e,
+        accentColor: 0x733246,
+        wallpaperTop: '#6b293d',
+        wallpaperMid: '#431624',
+        wallpaperGlow: '#d98ca3'
+      },
+      natural: {
+        name: '原色鈦金屬',
+        frameColor: 0xb7b2a8,
+        backColor: 0xa6a197,
+        bumpColor: 0xb2ada3,
+        accentColor: 0xc9c4ba,
+        wallpaperTop: '#7d7a73',
+        wallpaperMid: '#3a3936',
+        wallpaperGlow: '#e8e3d9'
+      },
+      desert: {
+        name: '沙漠鈦金屬',
+        frameColor: 0xc8ae8d,
+        backColor: 0xb89c7b,
+        bumpColor: 0xc4a988,
+        accentColor: 0xdcc4a5,
+        wallpaperTop: '#8f7455',
+        wallpaperMid: '#423322',
+        wallpaperGlow: '#f2d9ba'
+      },
+      black: {
+        name: '太空黑鈦金屬',
+        frameColor: 0x262629,
+        backColor: 0x1b1b1e,
+        bumpColor: 0x232326,
+        accentColor: 0x3a3a3f,
+        wallpaperTop: '#323238',
+        wallpaperMid: '#121215',
+        wallpaperGlow: '#8e8e98'
+      }
+    };
+
+    // 3D 空間互動熱點資料（對應六面視圖的特徵部位）
+    const HOTSPOTS_DATA = [
+      {
+        id: 'camera-system',
+        title: '48MP 三鏡頭 Pro 相機系統',
+        badge: '背面全寬幅模組',
+        desc: '全新圓角矩形橫向寬幅鏡頭島，搭載三顆 4800 萬像素融合鏡頭、原彩閃光燈與 LiDAR 光學雷達掃描儀，支援 5 倍光學變焦。',
+        pos: new THREE.Vector3(-0.35, 1.32, -0.26)
+      },
+      {
+        id: 'dynamic-island',
+        title: '動態島與超瓷晶盾面板',
+        badge: '正面顯示器',
+        desc: '6.3 吋 Super Retina XDR 顯示器搭配極窄邊框與動態島即時活動顯示，峰值亮度高達 3,000 尼特。',
+        pos: new THREE.Vector3(0, 1.66, 0.17)
+      },
+      {
+        id: 'a20-chip',
+        title: 'A20 Pro 2 奈米晶片',
+        badge: '核心運算架構',
+        desc: '業界領先 2 奈米製程，帶來突破性的 Apple Intelligence 生成式運算效能與全天候 33 小時電池續航。',
+        pos: new THREE.Vector3(0.05, 0.1, -0.17)
+      },
+      {
+        id: 'camera-control',
+        title: '藍寶石玻璃相機控制鍵',
+        badge: '右側邊框工藝',
+        desc: '位於機身右側下方的電容式觸控按鍵，支援輕按鎖定曝光、滑動流暢切換焦段與景深。',
+        pos: new THREE.Vector3(0.96, -0.35, 0.0)
+      },
+      {
+        id: 'usbc-port',
+        title: 'USB-C 10Gb/s 與立體聲揚聲器',
+        badge: '底部連接埠',
+        desc: '支援 USB 3 高速資料傳輸、外接 SSD 直錄 4K 120fps ProRes 影片，兩側配置對稱精密聲學開孔。',
+        pos: new THREE.Vector3(0, -1.96, 0.0)
+      }
+    ];
+
+    // ==========================================
+    // 2. Three.js 場景、燈光與程式化環境反射
+    // ==========================================
+    let scene, camera, renderer, phoneGroup;
+    let frameMaterial, backGlassMaterial, cameraBumpMaterial, accentMetalMaterial, screenMaterial, logoMaterial;
+    let isAutoRotate = true;
+    let showHotspots = true;
+    let currentFinishKey = 'burgundy';
+
+    // 相機球座標控制參數（支援平滑阻尼插值）
+    let targetSpherical = { radius: 6.2, theta: 0.55, phi: 1.42 };
+    let currentSpherical = { radius: 6.2, theta: 0.55, phi: 1.42 };
+    let isDragging = false;
+    let prevPointer = { x: 0, y: 0 };
+
+    function createStudioEnvMap() {
+      // 使用 Canvas 產生高動態攝影棚反射貼圖，讓鈦金屬邊框呈現逼真高光
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+
+      const grad = ctx.createLinearGradient(0, 0, 0, 256);
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(0.25, '#4a4a52');
+      grad.addColorStop(0.5, '#18181c');
+      grad.addColorStop(0.75, '#5e5e68');
+      grad.addColorStop(1, '#ffffff');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 256);
+
+      // 模擬攝影棚柔光燈箱條紋
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.fillRect(60, 20, 90, 216);
+      ctx.fillRect(320, 30, 110, 196);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.mapping = THREE.EquirectangularReflectionMapping;
+      return texture;
+    }
+
+    function createWallpaperTexture(config) {
+      // 精準重現 front.png 的酒紅絲綢波浪漸層桌布與狀態列細節
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+
+      const bgGrad = ctx.createLinearGradient(0, 0, 512, 1024);
+      bgGrad.addColorStop(0, config.wallpaperTop);
+      bgGrad.addColorStop(0.5, config.wallpaperMid);
+      bgGrad.addColorStop(1, config.wallpaperTop);
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 512, 1024);
+
+      // 繪製流線型絲綢波浪光影（呼應 front.png）
+      for (let i = 0; i < 6; i++) {
+        const yBase = 140 + i * 155;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(0, yBase);
+        ctx.bezierCurveTo(180, yBase - 85, 330, yBase + 85, 512, yBase - 20);
+        ctx.lineTo(512, yBase + 130);
+        ctx.bezierCurveTo(330, yBase + 210, 180, yBase + 45, 0, yBase + 130);
+        ctx.closePath();
+
+        const waveGrad = ctx.createLinearGradient(0, yBase - 50, 0, yBase + 130);
+        waveGrad.addColorStop(0, config.wallpaperGlow + '55');
+        waveGrad.addColorStop(0.35, config.wallpaperTop + '88');
+        waveGrad.addColorStop(1, 'rgba(0,0,0,0.45)');
+        ctx.fillStyle = waveGrad;
+        ctx.fill();
+
+        // 邊緣高光絲線
+        ctx.strokeStyle = config.wallpaperGlow + '77';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 頂部時間與訊號極簡裝飾
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.font = '600 22px Inter, sans-serif';
+      ctx.fillText('9:41', 42, 54);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.anisotropy = 4;
+      return tex;
+    }
+
+    function createAppleLogoTexture() {
+      // 繪製背面中央微亮光澤的 Apple 標誌貼圖
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, 256, 256);
+
+      ctx.save();
+      ctx.translate(43, 43);
+      const p = new Path2D('M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.13-1.9-14.34-6.08-3.69-3.03-7.61-7.82-11.77-14.37-5.06-7.87-9.22-16.95-12.48-27.25-3.26-10.3-4.89-20.12-4.89-29.47 0-11.17 2.79-20.38 8.37-27.64 5.58-7.25 12.63-11.02 21.14-11.3 4.35 0 9.35 1.32 15.01 3.96 5.65 2.64 9.29 3.99 10.92 4.05 1.34 0 5.36-1.56 12.06-4.68 6.7-3.11 12.35-4.44 16.96-3.99 12.63 1.02 22.14 5.99 28.53 14.92-11.29 6.85-16.84 16.43-16.65 28.74.19 9.59 3.76 17.56 10.71 23.91 4.78 4.44 10.42 7.21 16.92 8.31-1.36 4.25-2.89 8.35-4.59 12.31zM119.22 31.01c0 7.49-2.74 14.48-8.21 20.97-6.6 7.72-14.59 12.18-23.25 11.48-.12-.91-.19-1.88-.19-2.92 0-7.19 3.13-14.88 8.69-21.18 2.77-3.18 6.3-5.83 10.58-7.95 4.28-2.11 8.33-3.28 12.16-3.5.15 1.07.22 2.11.22 3.1z');
+      ctx.fillStyle = 'rgba(255, 225, 235, 0.24)';
+      ctx.fill(p);
+      ctx.restore();
+
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    function createRoundedRectShape(width, height, radius) {
+      const shape = new THREE.Shape();
+      const x = -width / 2;
+      const y = -height / 2;
+      shape.moveTo(x, y + radius);
+      shape.lineTo(x, y + height - radius);
+      shape.quadraticCurveTo(x, y + height, x + radius, y + height);
+      shape.lineTo(x + width - radius, y + height);
+      shape.quadraticCurveTo(x + width, y + height, x + width, y + height - radius);
+      shape.lineTo(x + width, y + radius);
+      shape.quadraticCurveTo(x + width, y, x + width - radius, y);
+      shape.lineTo(x + radius, y);
+      shape.quadraticCurveTo(x, y, x, y + radius);
+      return shape;
+    }
+
+    function buildIPhone18ProModel() {
+      phoneGroup = new THREE.Group();
+      const envMap = createStudioEnvMap();
+      const initCfg = FINISH_CONFIGS[currentFinishKey];
+
+      // 材質定義
+      frameMaterial = new THREE.MeshStandardMaterial({
+        color: initCfg.frameColor,
+        metalness: 0.88,
+        roughness: 0.24,
+        envMap: envMap,
+        envMapIntensity: 1.35
+      });
+
+      backGlassMaterial = new THREE.MeshStandardMaterial({
+        color: initCfg.backColor,
+        metalness: 0.35,
+        roughness: 0.58,
+        envMap: envMap,
+        envMapIntensity: 0.75
+      });
+
+      cameraBumpMaterial = new THREE.MeshStandardMaterial({
+        color: initCfg.bumpColor,
+        metalness: 0.65,
+        roughness: 0.34,
+        envMap: envMap,
+        envMapIntensity: 1.05
+      });
+
+      accentMetalMaterial = new THREE.MeshStandardMaterial({
+        color: initCfg.accentColor,
+        metalness: 0.92,
+        roughness: 0.2,
+        envMap: envMap,
+        envMapIntensity: 1.4
+      });
+
+      const blackBezelMat = new THREE.MeshStandardMaterial({
+        color: 0x070709,
+        metalness: 0.2,
+        roughness: 0.12,
+        envMap: envMap,
+        envMapIntensity: 0.9
+      });
+
+      const lensGlassMat = new THREE.MeshPhysicalMaterial({
+        color: 0x162238,
+        metalness: 0.1,
+        roughness: 0.05,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.04,
+        envMap: envMap,
+        envMapIntensity: 2.0
+      });
+
+      // 1. 鈦金屬中框主體 (寬 1.88, 高 3.92, 厚 0.30)
+      const bodyW = 1.88;
+      const bodyH = 3.92;
+      const bodyR = 0.36;
+      const bodyShape = createRoundedRectShape(bodyW, bodyH, bodyR);
+      const extrudeSettings = {
+        depth: 0.26,
+        bevelEnabled: true,
+        bevelSegments: 8,
+        steps: 1,
+        bevelSize: 0.032,
+        bevelThickness: 0.032
+      };
+      const frameGeo = new THREE.ExtrudeGeometry(bodyShape, extrudeSettings);
+      frameGeo.center();
+      const frameMesh = new THREE.Mesh(frameGeo, frameMaterial);
+      phoneGroup.add(frameMesh);
+
+      // 2. 背面霧面玻璃背蓋 (呼應 back.png 內嵌霧面區域)
+      const backPanelShape = createRoundedRectShape(1.74, 3.76, 0.30);
+      const backPanelGeo = new THREE.ShapeGeometry(backPanelShape);
+      const backPanelMesh = new THREE.Mesh(backPanelGeo, backGlassMaterial);
+      backPanelMesh.rotation.y = Math.PI;
+      backPanelMesh.position.z = -0.163;
+      phoneGroup.add(backPanelMesh);
+
+      // 背面中央 Apple 標誌
+      const logoGeo = new THREE.PlaneGeometry(0.42, 0.42);
+      logoMaterial = new THREE.MeshBasicMaterial({
+        map: createAppleLogoTexture(),
+        transparent: true,
+        depthWrite: false
+      });
+      const logoMesh = new THREE.Mesh(logoGeo, logoMaterial);
+      logoMesh.rotation.y = Math.PI;
+      logoMesh.position.set(0, -0.22, -0.165);
+      phoneGroup.add(logoMesh);
+
+      // 3. 背面全寬幅 Pro 相機模組 (精準還原 back.png 的橫向圓角矩形鏡頭島)
+      const bumpW = 1.66;
+      const bumpH = 0.96;
+      const bumpR = 0.22;
+      const bumpShape = createRoundedRectShape(bumpW, bumpH, bumpR);
+      const bumpGeo = new THREE.ExtrudeGeometry(bumpShape, {
+        depth: 0.055,
+        bevelEnabled: true,
+        bevelSegments: 5,
+        steps: 1,
+        bevelSize: 0.022,
+        bevelThickness: 0.022
+      });
+      bumpGeo.center();
+      const bumpMesh = new THREE.Mesh(bumpGeo, cameraBumpMaterial);
+      bumpMesh.position.set(0, 1.32, -0.195);
+      phoneGroup.add(bumpMesh);
+
+      // 建構三顆 Pro 級鏡頭 (注意：背面朝 -Z，從背面看過去左上對應 x = +0.46)
+      function createProLens(x, y, z, radius) {
+        const lensUnit = new THREE.Group();
+        lensUnit.position.set(x, y, z);
+
+        // 金屬外環
+        const ringGeo = new THREE.CylinderGeometry(radius, radius * 1.04, 0.05, 48);
+        ringGeo.rotateX(Math.PI / 2);
+        const ringMesh = new THREE.Mesh(ringGeo, accentMetalMaterial);
+        lensUnit.add(ringMesh);
+
+        // 內部深黑鏡頭筒
+        const innerBarrelGeo = new THREE.CylinderGeometry(radius * 0.84, radius * 0.84, 0.054, 48);
+        innerBarrelGeo.rotateX(Math.PI / 2);
+        const innerBarrelMesh = new THREE.Mesh(innerBarrelGeo, blackBezelMat);
+        lensUnit.add(innerBarrelMesh);
+
+        // 藍寶石鏡片與內部光學鏡組
+        const glassGeo = new THREE.CylinderGeometry(radius * 0.68, radius * 0.68, 0.058, 48);
+        glassGeo.rotateX(Math.PI / 2);
+        const glassMesh = new THREE.Mesh(glassGeo, lensGlassMat);
+        lensUnit.add(glassMesh);
+
+        // 中央瞳孔光圈
+        const pupilGeo = new THREE.CylinderGeometry(radius * 0.28, radius * 0.28, 0.061, 32);
+        pupilGeo.rotateX(Math.PI / 2);
+        const pupilMesh = new THREE.Mesh(pupilGeo, new THREE.MeshBasicMaterial({ color: 0x050811 }));
+        lensUnit.add(pupilMesh);
+
+        phoneGroup.add(lensUnit);
+      }
+
+      // 左上鏡頭、左下鏡頭、中間主鏡頭 (背面視角)
+      createProLens(0.46, 1.53, -0.238, 0.21);
+      createProLens(0.46, 1.09, -0.238, 0.21);
+      createProLens(0.04, 1.31, -0.238, 0.22);
+
+      // 鏡頭島右側：原彩閃光燈 (上方)、麥克風孔 (中)、LiDAR 光學雷達 (下方)
+      const flashGeo = new THREE.CylinderGeometry(0.075, 0.075, 0.02, 32);
+      flashGeo.rotateX(Math.PI / 2);
+      const flashMesh = new THREE.Mesh(flashGeo, new THREE.MeshStandardMaterial({
+        color: 0xf4efe6,
+        emissive: 0x332e25,
+        roughness: 0.25
+      }));
+      flashMesh.position.set(-0.56, 1.54, -0.228);
+      phoneGroup.add(flashMesh);
+
+      const micGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.02, 16);
+      micGeo.rotateX(Math.PI / 2);
+      const micMesh = new THREE.Mesh(micGeo, new THREE.MeshBasicMaterial({ color: 0x09090b }));
+      micMesh.position.set(-0.56, 1.32, -0.228);
+      phoneGroup.add(micMesh);
+
+      const lidarGeo = new THREE.CylinderGeometry(0.082, 0.082, 0.02, 32);
+      lidarGeo.rotateX(Math.PI / 2);
+      const lidarMesh = new THREE.Mesh(lidarGeo, new THREE.MeshStandardMaterial({
+        color: 0x08080a,
+        metalness: 0.4,
+        roughness: 0.1
+      }));
+      lidarMesh.position.set(-0.56, 1.09, -0.228);
+      phoneGroup.add(lidarMesh);
+
+      // 4. 正面超薄黑邊玻璃與 OLED 顯示器 (呼應 front.png)
+      const frontBezelShape = createRoundedRectShape(1.82, 3.86, 0.33);
+      const frontBezelGeo = new THREE.ShapeGeometry(frontBezelShape);
+      const frontBezelMesh = new THREE.Mesh(frontBezelGeo, blackBezelMat);
+      frontBezelMesh.position.z = 0.163;
+      phoneGroup.add(frontBezelMesh);
+
+      // 螢幕顯示層
+      const screenW = 1.73;
+      const screenH = 3.77;
+      const screenShape = createRoundedRectShape(screenW, screenH, 0.29);
+      const screenGeo = new THREE.ShapeGeometry(screenShape);
+
+      // 修正 ShapeGeometry UV 映射讓桌布完整鋪滿螢幕
+      const posAttr = screenGeo.attributes.position;
+      const uvAttr = screenGeo.attributes.uv;
+      for (let i = 0; i < posAttr.count; i++) {
+        const u = (posAttr.getX(i) + screenW / 2) / screenW;
+        const v = (posAttr.getY(i) + screenH / 2) / screenH;
+        uvAttr.setXY(i, u, v);
+      }
+
+      screenMaterial = new THREE.MeshStandardMaterial({
+        map: createWallpaperTexture(initCfg),
+        roughness: 0.12,
+        metalness: 0.05,
+        emissive: 0xffffff,
+        emissiveMap: createWallpaperTexture(initCfg),
+        emissiveIntensity: 0.65
+      });
+      const screenMesh = new THREE.Mesh(screenGeo, screenMaterial);
+      screenMesh.position.z = 0.165;
+      phoneGroup.add(screenMesh);
+
+      // 動態島 Dynamic Island (藥丸形黑色開孔 + 前置原深感測相機)
+      const islandShape = createRoundedRectShape(0.38, 0.105, 0.052);
+      const islandGeo = new THREE.ShapeGeometry(islandShape);
+      const islandMesh = new THREE.Mesh(islandGeo, new THREE.MeshBasicMaterial({ color: 0x020203 }));
+      islandMesh.position.set(0, 1.68, 0.167);
+      phoneGroup.add(islandMesh);
+
+      const frontCamGeo = new THREE.CircleGeometry(0.026, 24);
+      const frontCamMesh = new THREE.Mesh(frontCamGeo, lensGlassMat);
+      frontCamMesh.position.set(0.11, 1.68, 0.168);
+      phoneGroup.add(frontCamMesh);
+
+      // 5. 側邊實體按鍵 (呼應 left.png 與 right.png)
+      function addSideButton(x, y, z, w, h, d) {
+        const btnGeo = new THREE.BoxGeometry(w, h, d);
+        const btnMesh = new THREE.Mesh(btnGeo, accentMetalMaterial);
+        btnMesh.position.set(x, y, z);
+        phoneGroup.add(btnMesh);
+      }
+
+      // 機身左側 (x = -0.975)：動作按鈕 + 音量調高/調低鍵
+      addSideButton(-0.975, 1.15, 0, 0.035, 0.18, 0.075);
+      addSideButton(-0.975, 0.78, 0, 0.035, 0.30, 0.075);
+      addSideButton(-0.975, 0.38, 0, 0.035, 0.30, 0.075);
+
+      // 機身右側 (x = +0.975)：側邊電源鍵 + 下方相機控制鍵
+      addSideButton(0.975, 0.68, 0, 0.035, 0.44, 0.075);
+      addSideButton(0.972, -0.35, 0, 0.025, 0.36, 0.075);
+
+      // 6. 底部 USB-C 連接埠與揚聲器開孔 (呼應 bottom.png)
+      const usbcOuterGeo = new THREE.BoxGeometry(0.32, 0.03, 0.11);
+      const usbcOuterMesh = new THREE.Mesh(usbcOuterGeo, new THREE.MeshBasicMaterial({ color: 0x09090b }));
+      usbcOuterMesh.position.set(0, -1.985, 0);
+      phoneGroup.add(usbcOuterMesh);
+
+      // USB-C 內部舌片
+      const usbcTongueGeo = new THREE.BoxGeometry(0.24, 0.025, 0.025);
+      const usbcTongueMesh = new THREE.Mesh(usbcTongueGeo, accentMetalMaterial);
+      usbcTongueMesh.position.set(0, -1.982, 0);
+      phoneGroup.add(usbcTongueMesh);
+
+      // 底部左右兩側麥克風與揚聲器精密圓孔
+      const holeGeo = new THREE.CylinderGeometry(0.016, 0.016, 0.02, 16);
+      const holeMat = new THREE.MeshBasicMaterial({ color: 0x08080a });
+      [-0.62, -0.53, -0.44, -0.35, 0.35, 0.44, 0.53, 0.62].forEach((hx) => {
+        const hole = new THREE.Mesh(holeGeo, holeMat);
+        hole.position.set(hx, -1.985, 0);
+        phoneGroup.add(hole);
+      });
+
+      // 天線微縫飾條 (上下左右邊框細節)
+      const bandMat = new THREE.MeshBasicMaterial({ color: 0x240c14 });
+      const bandGeo = new THREE.BoxGeometry(1.945, 0.018, 0.26);
+      const topBand = new THREE.Mesh(bandGeo, bandMat);
+      topBand.position.set(0, 1.55, 0);
+      phoneGroup.add(topBand);
+
+      const botBand = new THREE.Mesh(bandGeo, bandMat);
+      botBand.position.set(0, -1.55, 0);
+      phoneGroup.add(botBand);
+
+      scene.add(phoneGroup);
+    }
+
+    function initThreeScene() {
+      const container = document.getElementById('canvas-wrapper');
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      scene = new THREE.Scene();
+
+      camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
+      updateCameraPosition();
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.25;
+      container.appendChild(renderer.domElement);
+
+      // 攝影棚三點式打光，凸顯勃艮第酒紅鈦金屬邊框質感
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+      scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight(0xfff5f8, 1.45);
+      keyLight.position.set(4, 6, 5);
+      scene.add(keyLight);
+
+      const rimLight = new THREE.DirectionalLight(0xf3b6c8, 1.2);
+      rimLight.position.set(-5, 3, -5);
+      scene.add(rimLight);
+
+      const bottomFillLight = new THREE.PointLight(0xd2829a, 0.7, 15);
+      bottomFillLight.position.set(0, -4, 3);
+      scene.add(bottomFillLight);
+
+      // 建立 3D iPhone 18 Pro 模型
+      buildIPhone18ProModel();
+
+      // 建立 HTML 3D 熱點標記 DOM
+      buildHotspotElements();
+
+      // 綁定滑鼠與觸控互動事件
+      bindCanvasEvents(container);
+
+      // 監聽視窗尺寸變化
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function updateCameraPosition() {
+      const { radius, theta, phi } = currentSpherical;
+      camera.position.x = radius * Math.sin(phi) * Math.sin(theta);
+      camera.position.y = radius * Math.cos(phi);
+      camera.position.z = radius * Math.sin(phi) * Math.cos(theta);
+      camera.lookAt(0, 0, 0);
+    }
+
+    function onWindowResize() {
+      const container = document.getElementById('canvas-wrapper');
+      if (!container || !renderer || !camera) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    // ==========================================
+    // 3. 360° 拖曳、滾輪縮放與觸控控制
+    // ==========================================
+    function bindCanvasEvents(container) {
+      container.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        prevPointer = { x: e.clientX, y: e.clientY };
+        // 使用者手動操作時暫停自動旋轉
+        if (isAutoRotate) {
+          setAutoRotate(false);
+        }
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - prevPointer.x;
+        const deltaY = e.clientY - prevPointer.y;
+        prevPointer = { x: e.clientX, y: e.clientY };
+
+        targetSpherical.theta -= deltaX * 0.0085;
+        targetSpherical.phi -= deltaY * 0.0075;
+        // 限制垂直俯仰角避免翻轉破圖
+        targetSpherical.phi = Math.max(0.12, Math.min(Math.PI - 0.12, targetSpherical.phi));
+      });
+
+      window.addEventListener('pointerup', () => {
+        isDragging = false;
+      });
+
+      // 滑輪縮放
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        targetSpherical.radius += e.deltaY * 0.004;
+        targetSpherical.radius = Math.max(3.8, Math.min(9.5, targetSpherical.radius));
+      }, { passive: false });
+
+      // 行動裝置雙指縮放支援
+      let initialPinchDist = null;
+      container.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          initialPinchDist = Math.hypot(dx, dy);
+        }
+      }, { passive: true });
+
+      container.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2 && initialPinchDist) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.hypot(dx, dy);
+          const diff = initialPinchDist - dist;
+          targetSpherical.radius += diff * 0.015;
+          targetSpherical.radius = Math.max(3.8, Math.min(9.5, targetSpherical.radius));
+          initialPinchDist = dist;
+        }
+      }, { passive: true });
+    }
+
+    // ==========================================
+    // 4. 3D 空間互動熱點投影與說明卡片
+    // ==========================================
+    const hotspotElements = [];
+
+    function buildHotspotElements() {
+      const layer = document.getElementById('hotspots-layer');
+      layer.innerHTML = '';
+
+      HOTSPOTS_DATA.forEach((item, index) => {
+        const wrapper = document.createElement('button');
+        wrapper.className = 'hotspot-marker pointer-events-auto group focus:outline-none';
+        wrapper.setAttribute('aria-label', item.title);
+        wrapper.innerHTML = `
+          <span class="hotspot-pulse"></span>
+          <span class="relative flex items-center justify-center w-7 h-7 rounded-full bg-black/75 border-2 border-white text-white text-xs font-bold shadow-lg group-hover:scale-110 group-hover:bg-[#8E4158] transition">
+            ${index + 1}
+          </span>
+        `;
+
+        wrapper.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openHotspotCard(item);
+        });
+
+        layer.appendChild(wrapper);
+        hotspotElements.push({ el: wrapper, data: item });
+      });
+    }
+
+    function updateHotspotsProjection() {
+      const container = document.getElementById('canvas-wrapper');
+      if (!container || !camera || !phoneGroup) return;
+
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      hotspotElements.forEach(({ el, data }) => {
+        if (!showHotspots) {
+          el.style.display = 'none';
+          return;
+        }
+
+        const worldPos = data.pos.clone().applyMatrix4(phoneGroup.matrixWorld);
+        const projected = worldPos.clone().project(camera);
+
+        // 判斷熱點是否面向攝影機（避免背面熱點穿透顯示）
+        const camDir = camera.position.clone().normalize();
+        const pointDir = worldPos.clone().normalize();
+        const dot = camDir.dot(pointDir);
+
+        const x = (projected.x * 0.5 + 0.5) * width;
+        const y = (-(projected.y * 0.5) + 0.5) * height;
+
+        el.style.display = 'block';
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+
+        if (dot < -0.15) {
+          el.style.opacity = '0.22';
+          el.style.pointerEvents = 'none';
+        } else {
+          el.style.opacity = '1';
+          el.style.pointerEvents = 'auto';
+        }
+      });
+    }
+
+    function openHotspotCard(item) {
+      setAutoRotate(false);
+      document.getElementById('hotspot-badge').textContent = item.badge;
+      document.getElementById('hotspot-title').textContent = item.title;
+      document.getElementById('hotspot-desc').textContent = item.desc;
+      document.getElementById('hotspot-card').classList.remove('hidden');
+    }
+
+    // ==========================================
+    // 5. 六面視角切換與材質配色即時更新
+    // ==========================================
+    function switchCameraView(viewName) {
+      setAutoRotate(false);
+
+      // 正規化目前 theta 避免多圈旋轉導致過度迴轉
+      const twoPi = Math.PI * 2;
+      currentSpherical.theta = ((currentSpherical.theta % twoPi) + twoPi) % twoPi;
+      if (currentSpherical.theta > Math.PI) currentSpherical.theta -= twoPi;
+
+      const presets = {
+        hero: { radius: 6.2, theta: 0.55, phi: 1.42 },
+        front: { radius: 5.8, theta: 0, phi: Math.PI / 2 },
+        back: { radius: 5.8, theta: Math.PI, phi: Math.PI / 2 },
+        left: { radius: 5.8, theta: -Math.PI / 2, phi: Math.PI / 2 },
+        right: { radius: 5.8, theta: Math.PI / 2, phi: Math.PI / 2 },
+        top: { radius: 5.8, theta: 0, phi: 0.14 },
+        bottom: { radius: 5.8, theta: 0, phi: Math.PI - 0.14 }
+      };
+
+      if (presets[viewName]) {
+        targetSpherical = { ...presets[viewName] };
+      }
+
+      document.querySelectorAll('.view-btn').forEach((btn) => {
+        if (btn.dataset.view === viewName) {
+          btn.classList.add('bg-white', 'text-black');
+          btn.classList.remove('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+        } else {
+          btn.classList.remove('bg-white', 'text-black');
+          btn.classList.add('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+        }
+      });
+    }
+
+    function applyPhoneFinish(finishKey) {
+      const cfg = FINISH_CONFIGS[finishKey];
+      if (!cfg) return;
+      currentFinishKey = finishKey;
+
+      // 即時更新 Three.js 材質顏色與螢幕桌布
+      if (frameMaterial) frameMaterial.color.setHex(cfg.frameColor);
+      if (backGlassMaterial) backGlassMaterial.color.setHex(cfg.backColor);
+      if (cameraBumpMaterial) cameraBumpMaterial.color.setHex(cfg.bumpColor);
+      if (accentMetalMaterial) accentMetalMaterial.color.setHex(cfg.accentColor);
+
+      if (screenMaterial) {
+        const newTex = createWallpaperTexture(cfg);
+        screenMaterial.map = newTex;
+        screenMaterial.emissiveMap = newTex;
+        screenMaterial.needsUpdate = true;
+      }
+
+      // 同步更新 3D 展示區標籤與色票按鈕狀態
+      document.getElementById('current-color-label').textContent = cfg.name;
+      document.querySelectorAll('.swatch-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.finish === finishKey);
+      });
+
+      // 同步更新下方預購模擬器的顏色選項
+      syncOrderColorUI(finishKey);
+    }
+
+    function setAutoRotate(state) {
+      isAutoRotate = state;
+      const textEl = document.getElementById('autorotate-text');
+      if (textEl) {
+        textEl.textContent = isAutoRotate ? '自動旋轉：開啟' : '自動旋轉：暫停';
+      }
+    }
+
+    // 供相機介紹區塊按鈕呼叫：捲動回 3D 區並切換至背面視角
+    function focusCameraView() {
+      document.getElementById('studio-360').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        switchCameraView('back');
+        openHotspotCard(HOTSPOTS_DATA[0]);
+      }, 450);
+    }
+
+    // ==========================================
+    // 6. 預購模擬器與捲動動畫邏輯
+    // ==========================================
+    let selectedStorage = '256GB';
+    let selectedPrice = 36900;
+
+    function syncOrderColorUI(finishKey) {
+      const cfg = FINISH_CONFIGS[finishKey];
+      if (!cfg) return;
+      document.getElementById('order-color-name').textContent = cfg.name;
+
+      document.querySelectorAll('.order-finish-btn').forEach((btn) => {
+        const isMatch = btn.dataset.orderFinish === finishKey;
+        btn.classList.toggle('border-white', isMatch);
+        btn.classList.toggle('bg-white/10', isMatch);
+        btn.classList.toggle('border-white/15', !isMatch);
+        btn.classList.toggle('bg-white/5', !isMatch);
+      });
+    }
+
+    function initUIControls() {
+      // 視角按鈕事件
+      document.querySelectorAll('.view-btn').forEach((btn) => {
+        btn.addEventListener('click', () => switchCameraView(btn.dataset.view));
+      });
+
+      // 3D 區色票按鈕事件
+      document.querySelectorAll('.swatch-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyPhoneFinish(btn.dataset.finish));
+      });
+
+      // 自動旋轉開關
+      document.getElementById('toggle-autorotate').addEventListener('click', () => {
+        setAutoRotate(!isAutoRotate);
+      });
+
+      // 熱點顯示開關
+      document.getElementById('toggle-hotspots').addEventListener('click', () => {
+        showHotspots = !showHotspots;
+        document.getElementById('hotspots-text').textContent = showHotspots ? '工藝熱點：顯示' : '工藝熱點：隱藏';
+        if (!showHotspots) {
+          document.getElementById('hotspot-card').classList.add('hidden');
+        }
+      });
+
+      // 關閉熱點說明卡
+      document.getElementById('close-hotspot-card').addEventListener('click', () => {
+        document.getElementById('hotspot-card').classList.add('hidden');
+      });
+
+      // 預購模擬器：顏色選擇（連動 3D 模型）
+      document.querySelectorAll('.order-finish-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          applyPhoneFinish(btn.dataset.orderFinish);
+        });
+      });
+
+      // 預購模擬器：容量選擇
+      document.querySelectorAll('.storage-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedStorage = btn.dataset.storage;
+          selectedPrice = Number(btn.dataset.price);
+          document.getElementById('total-price').textContent = `NT$${selectedPrice.toLocaleString()}`;
+
+          document.querySelectorAll('.storage-btn').forEach((b) => {
+            const active = b === btn;
+            b.classList.toggle('border-white', active);
+            b.classList.toggle('bg-white/10', active);
+            b.classList.toggle('border-white/15', !active);
+            b.classList.toggle('bg-white/5', !active);
+          });
+        });
+      });
+
+      // 加入購物袋 Toast 提示
+      let toastTimer = null;
+      document.getElementById('add-to-bag-btn').addEventListener('click', () => {
+        const cfg = FINISH_CONFIGS[currentFinishKey];
+        const detailEl = document.getElementById('bag-toast-detail');
+        const toastEl = document.getElementById('bag-toast');
+
+        detailEl.textContent = `iPhone 18 Pro ${selectedStorage} ${cfg.name}（NT$${selectedPrice.toLocaleString()}）`;
+        toastEl.classList.remove('translate-y-24', 'opacity-0');
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.add('translate-y-24', 'opacity-0');
+        }, 3800);
+      });
+
+      // IntersectionObserver 捲動淡入特效
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('.reveal-section').forEach((sec) => observer.observe(sec));
+    }
+
+    // ==========================================
+    // 7. 主動畫迴圈與初始化
+    // ==========================================
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (isAutoRotate && !isDragging) {
+        targetSpherical.theta += 0.0045;
+      }
+
+      // 平滑阻尼插值 (Damping)
+      currentSpherical.radius += (targetSpherical.radius - currentSpherical.radius) * 0.1;
+      currentSpherical.theta += (targetSpherical.theta - currentSpherical.theta) * 0.1;
+      currentSpherical.phi += (targetSpherical.phi - currentSpherical.phi) * 0.1;
+
+      updateCameraPosition();
+
+      // 輕微懸浮呼吸感
+      if (phoneGroup) {
+        phoneGroup.position.y = Math.sin(Date.now() * 0.0016) * 0.035;
+        phoneGroup.updateMatrixWorld();
+      }
+
+      updateHotspotsProjection();
+      renderer.render(scene, camera);
+    }
+
+    window.onload = function () {
+      initThreeScene();
+      initUIControls();
+      animate();
+    };
+  </script>
+</body>
+</html>
